@@ -1,31 +1,31 @@
 #!/bin/bash
 
-# Set the endpoint URL
-ENDPOINT="https://api.openai.com/v1/chat/completions"
+# Set the endpoint URL - This example uses the Text Analytics API's endpoint for sentiment analysis.
+# Replace with your specific Azure region and service endpoint.
+ENDPOINT="https://YOUR_REGION.api.cognitive.microsoft.com/text/analytics/v3.0/sentiment"
 
 # Extract query from the first argument
-QUERY="Give be bash script for following query and return just script without other sentences: '$1'"
+QUERY="$1"
 
-# Model to be used
-MODEL="gpt-3.5-turbo"
-
-# Extract max tokens from the second argument or set a default value of 100
-MAX_TOKENS="${2:-100}"
+# Azure AI Subscription Key
+SUBSCRIPTION_KEY="YOUR_AZURE_AI_SUBSCRIPTION_KEY"
 
 # Make the API request
-response=$(curl -s -X POST -H "Authorization: Bearer $OPENAI_KEY" -H "Content-Type: application/json" -d '{
-  "messages": [
+response=$(curl -s -X POST $ENDPOINT \
+-H "Ocp-Apim-Subscription-Key: $SUBSCRIPTION_KEY" \
+-H "Content-Type: application/json" \
+-d '{
+  "documents": [
     {
-      "role": "user",
-      "content": "'"${QUERY}"'"
+      "language": "en",
+      "id": "1",
+      "text": "'"${QUERY}"'"
     }
-  ],
-  "model": "'$MODEL'",
-  "max_tokens": '$MAX_TOKENS'
-}' $ENDPOINT)
+  ]
+}')
 
-# Extract the reply from the JSON response
-reply=$(echo "$response" | jq -r '.choices[0].message.content' | sed "s/'//g")
+# Extract the sentiment result from the JSON response
+sentiment=$(echo "$response" | jq -r '.documents[0].sentiment')
 
-# Print the reply
-echo "$reply"
+# Print the sentiment
+echo "$sentiment"
