@@ -1,58 +1,93 @@
+Absolutely, I'll provide a full README with all the options covered in one unified document:
+
+---
+
 # Bash AI Azure Assistant
 
-A bash utility powered by Azure Cognitive Services, developed and maintained by `jaroslavmraz`. This assistant is designed to provide Azure AI service-related responses to your terminal queries.
+A bash utility powered by Azure Cognitive Services, developed and maintained by `jaroslavmraz`. This assistant delivers Azure AI service-related responses directly to your terminal.
 
 ## Overview
 
-While built on the foundation of Azure Cognitive Services, this assistant does not execute any commands from Azure's responses directly. Instead, it delivers the results neatly within your terminal window, ensuring that you have full control over the information provided.
+While rooted in Azure Cognitive Services, this assistant is designed to display AI responses in your terminal window, without executing them. Whether you're harnessing the power of Azure's services for sentiment analysis, image recognition, or another functionality, this tool is your gateway.
 
 ## 🚀 Installation
 
-To get started with the Bash AI Azure Assistant, follow the steps below:
-
-1. **Clone the repository from GitHub**:
+1. **Clone the repository**:
 
    ```bash
    gh repo clone jaroslavmraz/bash-ai-azure
    ```
 
-2. **Move the main script to your binaries folder and make it executable**:
+2. **Install the script**:
 
    ```bash
    mv bash-ai-azure/azure-assist.sh /usr/bin/azure-assist
    chmod +x /usr/bin/azure-assist
    ```
 
-3. **Environment Variable Setup**:
+3. **Configuration**:
 
-   The script requires the Azure AI Subscription Key. Save it in the `SUBSCRIPTION_KEY` environment variable:
+   There are two methods to configure the Azure endpoint and API key:
 
-   ```bash
-   echo "\nSUBSCRIPTION_KEY=\"YOUR_AZURE_SUBSCRIPTION_KEY_HERE\"" >> ~/.bash_profile
-   ```
+   ### Using 1Password:
 
-   After you've added the key, either restart your terminal or refresh your profile:
+   If you have the 1Password CLI (`op` command):
 
-   ```bash
-   source ~/.bash_profile
-   ```
+   - Ensure you've [installed the 1Password CLI](https://support.1password.com/command-line-getting-started/) and logged in using `op signin`.
+
+   - Store your Azure API key and endpoint:
+
+     ```bash
+     op create item login title="Azure AI Credentials" username="Azure Endpoint" password="Your API Key" --vault="YourVaultName"
+     ```
+
+   - In the `azure-assist.sh` script, retrieve the credentials:
+
+     ```bash
+     CREDENTIALS=$(op get item "Azure AI Credentials" --vault="YourVaultName")
+     ENDPOINT=$(echo $CREDENTIALS | jq -r '.details.fields[] | select(.name=="username").value')
+     SUBSCRIPTION_KEY=$(echo $CREDENTIALS | jq -r '.details.fields[] | select(.name=="password").value')
+     ```
+
+   ### Manual Configuration:
+
+   If you aren't using 1Password or prefer manual setup:
+
+   - Open the `azure-assist.sh` script in an editor. Find and modify the line:
+
+     ```bash
+     ENDPOINT="https://YOUR_REGION.api.cognitive.microsoft.com/text/analytics/v3.0/sentiment"
+     ```
+
+     Replace `YOUR_REGION` with your specific Azure region.
+
+   - Store the Azure API key:
+
+     ```bash
+     echo "\nSUBSCRIPTION_KEY=\"YOUR_AZURE_SUBSCRIPTION_KEY_HERE\"" >> ~/.bash_profile
+     source ~/.bash_profile
+     ```
 
 ## 🔧 Usage
 
-Invoke the Bash AI Azure Assistant with a query:
+Invoke the Bash AI Azure Assistant with:
 
 ```bash
-azure-assist "Your query related to Azure AI service here"
+azure-assist "Your specific query for Azure AI service"
 ```
 
-For instance:
+For example:
 
 ```bash
-azure-assist "analyze sentiment of the following text..."
+azure-assist "analyze sentiment of this text..."
 ```
 
 ---
 
-🔗 **Visit the repository on [GitHub](https://github.com/jaroslavmraz/bash-ai-azure) for more details, issues, or contributions.**
+🔗 **For additional details, contributions, or to report issues, please visit the [official GitHub repository](https://github.com/jaroslavmraz/bash-ai-azure).**
 
-🙏 A big shoutout to everyone contributing to this project. Your support is invaluable!
+🙏 A heartfelt thank you to all contributors and users of this project. Your feedback and support enhance the tool for everyone.
+
+---
+
+**Note**: When using 1Password, ensure your vault is unlocked before running the script. Depending on your setup, you might be prompted for your master password or a session token.
