@@ -1,7 +1,3 @@
-Absolutely, I'll provide a full README with all the options covered in one unified document:
-
----
-
 # Bash AI Azure Assistant
 
 A bash utility powered by Azure Cognitive Services, developed and maintained by `jaroslavmraz`. This assistant delivers Azure AI service-related responses directly to your terminal.
